@@ -1,3 +1,4 @@
+#-*-coding:utf-8*-
 import random
 a = 9
 b = 9
