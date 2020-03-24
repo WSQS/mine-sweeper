@@ -3,27 +3,24 @@ import random
 a = 9
 b = 9
 c = 10
-i = 1
-map1=[0]#存储生成的地图
-map2=[0]#确定哪些方块是可视的
-while i <= (a+2)*(b+2):#2到a+1与2到b加1为真正游戏地图，其余区域为避免溢出采用
-	map1.append(0)#增加列表长度
-	map2.append(0)
-	i = i + 1
-i = 1
 
-while i <= c:#随机生成地雷位置
+#初始化地图
+map1=[0 for value in range(1,(a+2)*(b+2)+2)]#存储生成的地图
+map2=map1[:]#确定哪些方块是可视的
+
+#随机生成地雷位置
+for i in range(0,c):
 	d = (random.randint(2,a+1)-1)*(a+2) +random.randint(2,b+1)#随机生成行和列的位置
 	print(d)
 	map1[d] = -1#-1标记为地雷
-	i = i + 1
-i = 2
-d = 0
+
+#对地图数字进行标号
 e = []
-while i <= a + 1:#遍历每一个格子以确定每个格子之中的数字
+for i in range(2,a+2):#遍历每一个有效的格子以确定每个格子之中的数字
 	j = 2
-	while j <= b + 1:
+	for j in range(2,b+2):
 		if map1[(i-1)*(a+2) + j] ==0:#确定第i行j列的数字是不是炸弹，而后检索其周围八格有无地雷，d暂时存储周围炸弹值
+			d = 0
 			if map1[(i-1)*(a+2) + j + 1] == -1:
 				d = d +1
 			if map1[(i-1)*(a+2) + j -1 ] == -1:
@@ -36,19 +33,17 @@ while i <= a + 1:#遍历每一个格子以确定每个格子之中的数字
 				d = d +1
 			if map1[(i)*(a+2) + j ] == -1:
 				d = d +1
-			if map1[(i)*(a+2) + j -1] == -1:
+			if map1[(i)*(a+2)+j-1] == -1:
 				d = d +1
-			if map1[(i)*(a+2) + j +1] == -1:
+			if map1[(i)*(a+2)+j+1] == -1:
 				d = d +1
-			f=(i-1)*(a+2)+j 
-			map1[f] = d
-		j=j+1
-		d = 0
-	print(map1[(i-1)*(a+2)+2:i*(a+2)])
-	i = i+ 1	
+			map1[(i-1)*(a+2)+j] = d
+	print(map1[(i-1)*(a+2)+2:i*(a+2)])	
+
+#寻找一个为0的方格作为模拟的第一次点击的方格
 i = 2
 j = 2
-while map1[(i-1)*(a+2) + j]!=0:#寻找一个为0的方格作为模拟的第一次点击的方格
+while map1[(i-1)*(a+2) + j]!=0:
 	j = j + 1
 	if j >= b + 2:#当超过右边界时，换入下一行
 		j = 2
@@ -56,22 +51,33 @@ while map1[(i-1)*(a+2) + j]!=0:#寻找一个为0的方格作为模拟的第一次点击的方格
 print(str((i-1)*(a+2) + j))
 print(map1[(i-1)*(a+2) + j])
 search1=[(i-1)*(a+2) + j]
-for i in search1:#生成一次点击之后的视野（未实现）
-	if map1[i+1] == 0:
+
+#加入边框条件限制，对边界元素赋值为-2
+for i in range(1,a+3):
+	map1[(i-1)*(a+2)+1]=-2
+	map1[i*(a+2)]=-2
+for i in range(1,b+3):
+	map1[i]=-2
+	map1[(a+2)*(b+2)+1-i]=-2
+
+#生成一次点击之后的视野（已实现）将有数字的元素存入另一数组（未实现）优化数据结构（未实现）
+for i in search1:
+	if map1[i+1] == 0 and (i+1) not in search1:
 		search1.append(i+1)
-	if map1[i-1] == 0:
+	if map1[i-1] == 0 and (i-1) not in search1:
 		search1.append(i-1)
-	if map1[i-a-2] == 0:
+	if map1[i-a-2] == 0 and (i-a-2) not in search1:
 		search1.append(i-a-2)
-	if map1[i+a+2] == 0:
+	if map1[i+a+2] == 0 and (i+a+2) not in search1:
 		search1.append(i+a+2)
-	if map1[i-a-3] == 0:
+	if map1[i-a-3] == 0 and (i-a-3) not in search1:
 		search1.append(i-a-3)
-	if map1[i-a-1] == 0:
+	if map1[i-a-1] == 0 and (i-a-1) not in search1:
 		search1.append(i-a-1)
-	if map1[i+a+1] == 0:
+	if map1[i+a+1] == 0 and (i+a+1) not in search1:
 		search1.append(i+a+1)
-	if map1[i+a+3] == 0:
+	if map1[i+a+3] == 0 and (i+a+3) not in search1:
 		search1.append(i+a+3)
-	map2[i] = "x"
-print(map2)
+	map2[i] = 1
+for i in range(2,a+2):
+	print(map2[(i-1)*(a+2)+2:i*(a+2)])
