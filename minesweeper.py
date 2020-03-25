@@ -47,20 +47,13 @@ for i in range(2,a+2):#遍历每一个有效的格子以确定每个格子之中的数字
 			map1[(i-1)*(b+2)+j] = d
 	print(map1[(i-1)*(b+2)+2:i*(b+2)])	
 
-#寻找一个为0的方格作为模拟的第一次点击的方格
-i = 2
-j = 2
-while map1[(i-1)*(b+2) + j]!=0:
-	j = j + 1
-	if j >= b + 2:#当超过右边界时，换入下一行
-		j = 2
-		i = i + 1
-print(str((i-1)*(b+2) + j))
-print(map1[(i-1)*(b+2) + j])
-search1=[(i-1)*(b+2) + j]
+for i in range(1,(a+2)*(b+2)+1):
+	if map1[i]==0:
+		break
+print(str(i))
+print(map1[i])
+search1=[i]
 search2=[]
-
-
 
 #生成一次点击之后的视野（已实现）将有数字的元素存入另一数组（未实现）
 for i in search1:
@@ -71,7 +64,6 @@ for i in search1:
 			search2.append(k)
 			map2[k]=2
 	map2[i] = 1
-
 
 for i in search2:
 	d = 0
