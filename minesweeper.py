@@ -3,6 +3,7 @@ import random
 a = 9
 b = 9
 c = 10
+flag=1
 
 #初始化地图
 map1=[0 for value in range(1,(a+2)*(b+2)+2)]#存储生成的地图
@@ -15,6 +16,7 @@ for i in range(1,b+3):
 	map1[(a+2)*(b+2)+1-i]=-2
 map2=map1[:]#确定哪些方块是可视的
 map3=map1[:]#存储已知的数字
+
 
 #随机生成地雷位置
 for i in range(0,c):
@@ -47,7 +49,7 @@ for i in range(2,a+2):#遍历每一个有效的格子以确定每个格子之中的数字
 			map1[(i-1)*(b+2)+j] = d
 	print(map1[(i-1)*(b+2)+2:i*(b+2)])	
 
-for i in range(1,(a+2)*(b+2)+1):
+for i in range((a+2)*(b+2)//2,(a+2)*(b+2)+1):
 	if map1[i]==0:
 		break
 print(str(i))
@@ -55,36 +57,49 @@ print(map1[i])
 search1=[i]
 search2=[]
 
-#生成一次点击之后的视野（已实现）将有数字的元素存入另一数组（未实现）
-for i in search1:
-	for k in get_around(i):
-		if map1[k] == 0 and k not in search1:
-			search1.append(k)
-		elif map1[k] != -1 and map1[k] != -2 and k not in search2 and k not in search1:
-			search2.append(k)
-			map2[k]=2
-	map2[i] = 1
-
-for i in search2:
-	d = 0
-	e = []
-	f = 0
-	for k in get_around(i):
-		if map2[k] == 0:
-			d=d+1
-			e.append(k)
-		elif map2[k] == 3:
-			f=f+1
-	if d == map1[i]:
-		for j in e:
-			map2[j]=3
-	if f == map1[i]:
+def search_1():#生成一次点击之后的视野（已实现）将有数字的元素存入另一数组（未实现）
+	flag1 = 0
+	for i in search1:
 		for k in get_around(i):
 			if map1[k] == 0 and k not in search1:
 				search1.append(k)
+				flag1 = 1
 			elif map1[k] != -1 and map1[k] != -2 and k not in search2 and k not in search1:
 				search2.append(k)
 				map2[k]=2
+				flag1 = 1
+		map2[i] = 1
+	return flag1
 
-for i in range(2,a+2):
-	print(map2[(i-1)*(b+2)+2:i*(b+2)])
+def search_2():
+	flag1 = 0
+	for i in search2:
+		d = 0
+		e = []
+		f = 0
+		for k in get_around(i):
+			if map2[k] == 0:
+				d=d+1
+				e.append(k)
+			elif map2[k] == 3:
+				f=f+1
+		if d == map1[i]:
+			for j in e:
+				map2[j]=3
+		if f == map1[i]:
+			for k in get_around(i):
+				if map1[k] == 0 and k not in search1:
+					search1.append(k)
+					flag1 = 1
+				elif map1[k] != -1 and map1[k] != -2 and k not in search2 and k not in search1:
+					search2.append(k)
+					map2[k]=2
+					flag1 = 1
+	return flag1
+
+
+while flag:
+	flag = search_1() or search_2()
+	for i in range(2,a+2):
+		print(map2[(i-1)*(b+2)+2:i*(b+2)])
+	print("\n")
