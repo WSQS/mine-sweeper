@@ -3,7 +3,6 @@ import random
 a = 9
 b = 9
 c = 10
-flag=1
 
 #初始化地图
 map1=[0 for value in range(1,(a+2)*(b+2)+2)]#存储生成的地图
@@ -57,7 +56,8 @@ print(map1[i])
 search1=[i]
 search2=[]
 
-def search_1():#生成一次点击之后的视野（已实现）将有数字的元素存入另一数组（未实现）
+#生成视野
+def search_1():
 	flag1 = 0
 	for i in search1:
 		for k in get_around(i):
@@ -71,6 +71,7 @@ def search_1():#生成一次点击之后的视野（已实现）将有数字的元素存入另一数组（未实
 		map2[i] = 1
 	return flag1
 
+#对有数字的方块进行处理
 def search_2():
 	flag1 = 0
 	for i in search2:
@@ -83,23 +84,24 @@ def search_2():
 				e.append(k)
 			elif map2[k] == 3:
 				f=f+1
-		if d == map1[i]:
+		if (d+f) == map1[i]:
 			for j in e:
 				map2[j]=3
+				flag1 = 1
 		if f == map1[i]:
 			for k in get_around(i):
-				if map1[k] == 0 and k not in search1:
+				if map1[k] != -1 and map1[k] != -2 and k not in search2 and k not in search1:
 					search1.append(k)
 					flag1 = 1
-				elif map1[k] != -1 and map1[k] != -2 and k not in search2 and k not in search1:
-					search2.append(k)
-					map2[k]=2
-					flag1 = 1
 	return flag1
-
-
-while flag:
-	flag = search_1() or search_2()
-	for i in range(2,a+2):
-		print(map2[(i-1)*(b+2)+2:i*(b+2)])
-	print("\n")
+#第一阶段的运行
+def part1():
+	flag = 1#判定一个循环之中有无变化
+	while flag:
+		flag = search_1() or search_2()
+		for i in range(2,a+2):
+			print(map2[(i-1)*(b+2)+2:i*(b+2)])
+		print("\n")
+part1()
+for i in range(2,a+2):
+	print(map1[(i-1)*(b+2)+2:i*(b+2)])
